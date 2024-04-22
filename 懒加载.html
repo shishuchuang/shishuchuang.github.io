@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body,html {
+            height: 100%;
+        }
+        h1 {
+            text-align: center;
+        }
+
+        ul {
+
+            overflow: hidden;
+        }
+
+        ul li {
+            height: 160px;
+        }
+
+        ul li img {
+
+            width: 100px;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+    <!-- 
+        1、渲染页面时可以先写一个静态的li，设置好样式在动态设置
+     -->
+    <h1>电影</h1>
+    <ul id="list">
+    </ul>
+    <script>
+        var arr1 = [
+            {
+                url: "https://pic.maizuo.com/usr/movie/57116f984c95f7e0abe768550bd78ef9.jpg?x-oss-process=image/quality,Q_70",
+                title: "你想活出怎样的人生",
+                grade: "7.4"
+            },
+            {
+                url: "https://pic.maizuo.com/usr/movie/be17f0784f8a83fbe6be79df1ce1914b.jpg?x-oss-process=image/quality,Q_70",
+                title: "哥斯拉大战金刚",
+                grade: "7.2"
+            },
+            {
+                url: "https://pic.maizuo.com/usr/movie/7a4e3daddbe3a35aa4247cb4ae6273cd.jpg?x-oss-process=image/quality,Q_70",
+                title: "草木人间",
+                grade: "7.4"
+            },
+            {
+                url: "https://pic.maizuo.com/usr/movie/4de0b4ddb98abe9fa45d6b31da07cb53.jpg?x-oss-process=image/quality,Q_70",
+                title: "来自汪星的你",
+                grade: "7.5"
+            },
+            {
+                url: "https://pic.maizuo.com/usr/movie/adc91ba9d7505d7352260f9d4a6fcff2.jpg?x-oss-process=image/quality,Q_70",
+                title: "黄雀在后",
+                grade: "7.6"
+            }
+        ]
+        var arr2 = [
+            {
+                url: "https://pic.maizuo.com/usr/movie/89d7a3bbd98d0ffab74da50cd03641e2.jpg?x-oss-process=image/quality,Q_70",
+                title: "功夫熊猫4",
+                grade: "9.6"
+            },
+            {
+                url: "https://pic.maizuo.com/usr/movie/adc91ba9d7505d7352260f9d4a6fcff2.jpg?x-oss-process=image/quality,Q_70",
+                title: "黄雀在后！",
+                grade: "7.6"
+            },
+            {
+                url: "https://pic.maizuo.com/usr/movie/a8ecf5fcbeeddb7488876f042bf7baa4.jpg?x-oss-process=image/quality,Q_70",
+                title: "我们一起摇太阳",
+                grade: "7.6"
+
+            },
+            {
+                url: "https://pic.maizuo.com/usr/movie/482e43f69efd52ec64575c95786c60d8.jpg?x-oss-process=image/quality,Q_70",
+                title: "熊出没.逆转时空",
+                grade: "9.9"
+            },
+            {
+                url: "https://pic.maizuo.com/usr/movie/f66699085d49b237ce3015e59a99095d.jpg?x-oss-process=image/quality,Q_70",
+                title: "开心超人之时空营救",
+                grade: "9.8"
+            }
+        ]
+        renderHTML(arr1)/* 函数调用可以写在函数前面，因为声明 */
+        function renderHTML(arr) {/* arr 是形参,看调用的实参 */
+            //这个是用innerHTML 添加会把之前的li覆盖影响效率
+            //     list.innerHTML += arr.map(function (item) {
+            //         return `<li>
+            //     <img src="${item.url}">
+            //     <h3>${item.title}</h3>
+            //     <p>评分：${item.grade}</p>
+            // </li>`
+            //     }).join("")
+
+            for (var i = 0; i < arr.length; i++) {
+                var oil = document.createElement("li")/* 创建节点 */
+                oil.innerHTML = `<img src="${arr[i].url}">
+              <h3>${arr[i].title}</h3>
+              <p>评分：${arr[i].grade}</p>`
+              list.appendChild(oil)/* 在元素后面插入 */
+            }
+        }
+        //onscroll 事件在元素的滚动条被滚动时发生,用来检测什么时候滚动条划到底部，好加载新数据
+        // 内容的高度+ul内容偏移量=总宽度  ，当窗口+滚动条(根据划多少变化的)等于总宽度就是划到底部了
+        // 设置标志的原因是因为onscroll 会重复执行，用标志来判断
+        var isolad = false/* 设置变量为false为标志 */
+        window.onscroll = function () {
+            var ulheight = list.offsetHeight/* ul 内容的高度 */
+            var ultop = list.offsetTop/* ul 内容偏移量 */
+            // console.log(ulheight + ultop)
+            var scrolltop = document.documentElement.scrollTop || document.body.scrollTop/* 滚动条距离 */
+            var windowHeight = document.documentElement.clientHeight/* 窗口的高度 */
+            // console.log(Math.round(scrolltop + windowHeight))
+
+            if (isolad) return/* 为ture就终止 return跳出循环，后面的也不会执行*/
+            if ((ulheight + ultop) - Math.round(scrolltop + windowHeight) < 50) {
+                //  if((ulheight+ultop) === Math.round(scrolltop+windowHeight)){
+                console.log("到达底部了")
+                isolad = true/*为了防止到底事件重复执行到这里事件就停止了 */
+                //渲染下一页数据
+                setTimeout(function () {/* 延迟1秒将来后端拿数据需要时间的 */
+                    renderHTML(arr2)
+                    isolad = false/* false才触发 就是让事件在渲染完数据在触发 */
+                }, 1000)
+            }
+        }
+       
+    </script>
+</body>
+
+</html>
